@@ -9,6 +9,7 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import { QueryProvider } from "@/providers/query-provider";
+import { SheetProvider } from "@/providers/sheet-provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -27,7 +28,10 @@ export default function RootLayout({
         <body className={inter.className}>
           <SignedOut></SignedOut>
           <SignedIn></SignedIn>
-          <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>
+            <SheetProvider/>
+            {children}
+          </QueryProvider>
         </body>
       </html>
     </ClerkProvider>
