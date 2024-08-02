@@ -4,19 +4,24 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { client } from "@/lib/hono";
 
-type ResponseType = InferResponseType<typeof client.api.accounts.$post>;
-type RequestType = InferRequestType<typeof client.api.accounts.$post>["json"];
+type ResponseType = InferResponseType<
+  (typeof client.api.accounts)[":id"]["$delete"]
+>;
 
-export const useCreateAccount = () => {
+
+export const useDeleteAccount = (id?: string) => {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation<ResponseType, Error, RequestType>({
-    mutationFn: async (json) => {
-      const response = await client.api.accounts.$post({ json });
+  const mutation = useMutation<ResponseType, Error>({
+    mutationFn: async () => {
+      const response = await client.api.accounts[":id"]["$delete"]({
+        param: { id },
+      });
       return await response.json();
     },
     onSuccess: () => {
-      toast("Account created");
+      toast("Account deleted");
+      queryClient.invalidateQueries({ queryKey: ["accounts", { id }] });
       queryClient.invalidateQueries({ queryKey: ["accounts"] });
     },
     onError: () => {
